@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>业务类型工作统计</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="../staticfile/custom/darkgreen/uimaker/easyui.css">
+<link rel="stylesheet" href="../staticfile/custom/darkgreen/uimaker/icon.css">
+<link rel="stylesheet" href="../staticfile/custom/darkgreen/css/providers1.css">
+<link rel="stylesheet" href="../staticfile/Report.css">
+<script type="text/javascript" src="../staticfile/custom/darkgreen/jquery.min.js"></script>
+<script type="text/javascript" src="../staticfile/custom/darkgreen/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../staticfile/custom/darkgreen/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../privateJs/ReportManage/BusinessReport.js"></script>
+</head>
+<body>
+	<div class="container">
+		<table id="businessreport_dg" style="width:100%;height:700px"
+			title="业务类型工作统计列表"
+			data-options="
+                rownumbers:true,
+                singleSelect:false,
+                autoRowHeight:true,
+                pagination:true,
+                fitColumns:true,
+                striped:true,
+                checkOnSelect:false,
+                selectOnCheck:false,
+                collapsible:true,
+                toolbar:'#tb',
+                pageSize:20">
+			<thead>
+				<tr>
+					<th field="t_department" width="20%" align="center">部门</th>
+					<th field="code_name" width="18%" align="center">业务类型</th>
+					<th field="pass_num" width="15%" align="center">合格数</th>
+					<th field="reject_num" width="15%" align="center">不合格数</th>
+					<th field="count_num" width="15%" align="center">总数</th>
+					<th field="rate" width="15%" align="center">通过率</th>
+				</tr>
+			</thead>
+		</table>
+		<div id="tb" style="padding:0 30px;">
+			<span class="con-span">业务操作类型：</span>
+			<select id="operType" class="easyui-combobox" name="language" style="height:35px;width:166px;" data-options="valueField:'id', textField:'text',editable:true">
+				<option value="-1">全部</option>
+			</select> 
+			<span class="con-span">部门: </span>
+				<input id="search_t_department" class="easyui-textbox" type="text" name="code" style="width:166px;height:35px;line-height:35px;" /> 
+			<span class="con-span">业务类型: </span>
+				<input id="search_code_name" class="easyui-textbox" type="text" name="code" style="width:166px;height:35px;line-height:35px;" /> 
+			<span class="con-span">查验日期: </span>
+				<input id="search_startdate" class="easyui-datebox" style="width:166px;height:35px;line-height:35px;"> 
+			<span class="con-span">到 </span>
+				<input id="search_enddate" class="easyui-datebox" style="width:166px;height:35px;line-height:35px;"> 
+			<a href="#" class="easyui-linkbutton" iconCls="icon-search" data-options="selected:true" onclick="searchData()">查询</a>
+		 	<a href="#" class="easyui-linkbutton" iconCls="icon-reload" onclick="txtreset()">重置</a>
+		</div>
+		
+		<div class="panel-primary">
+            <div class="panel-heading">
+                <h4><strong>合计</strong></h4>
+            </div>
+            <div class="panel-body">
+                <form class="form-horizontal">
+                    <div class="form-group" >
+                        <div class="div_lable">
+                            <label class="label_count">合格数：</label>
+                        </div>
+                        <div class="div_lable">
+                            <label class="label_count" id="lblPassNum"></label>
+                        </div>
+                        <div class="div_lable">
+                            <label class="label_count">不合格数：</label>
+                        </div>
+                        <div class="div_lable">
+                            <label class="label_count" id="lblRejectNum"></label>
+                        </div>
+                        <div class="div_lable">
+                            <label class="label_count">总数：</label>
+                        </div>
+                        <div class="div_lable">
+                            <label class="label_count" id="lblAllNum"></label>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+	</div>
+</body>
+</html>

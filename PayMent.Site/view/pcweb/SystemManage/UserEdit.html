@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>UserEdit.html</title>
+
+<meta name="keywords" content="keyword1,keyword2,keyword3">
+<meta name="description" content="this is my page">
+<meta name="content-type" content="text/html; charset=UTF-8">
+
+<!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+
+</head>
+
+<body>
+
+	
+	<form id="form1" runat="server">
+		<div>
+			<table cellpadding="10" style="margin-left: 50px">
+				<tr>
+					<td><strong style="color: #FF0000">*</strong>人员姓名:</td>
+					<td><input id="txtpeoplename" class="easyui-textbox"
+						style="width:230px;height:30px;line-height:35px;" /></td>
+				</tr>
+				<tr>
+					<td><strong style="color: #FF0000">*</strong>用户名:</td>
+					<td><input id="txtusername" class="easyui-textbox"
+						style="width:230px;height:30px;line-height:35px;" /></td>
+				</tr>
+				<tr>
+					<td><strong style="color: #FF0000">*</strong>密码:</td>
+					<td><input id="txtpassword" type="password"
+						class="easyui-textbox"
+						style="width:230px;height:30px;line-height:35px;" /></td>
+				</tr>
+				<tr>
+					<td><strong style="color: #FF0000">*</strong>工作证件号:</td>
+					<td><input id="txtidnumber" class="easyui-textbox"
+						style="width:230px;height:30px;line-height:35px;" /></td>
+				</tr>
+				<tr>
+					<td><strong style="color: #FF0000">*</strong>证件有效期:</td>
+					<td><input id="dtexpirydate" type="text" name="date"
+						style="width:230px;height:30px;line-height:35px;" editable="false"
+						class="easyui-datebox" required="required" /></td>
+				</tr>
+				<tr>
+					<td>身份证号</td>
+					<td><input id="txtCardNo" class="easyui-textbox"
+						style="width:230px;height:30px;line-height:35px;" /></td>
+				</tr>
+				<tr>
+					<td><strong style="color: #FF0000">*</strong>角色</td>
+					<td><select id="txtroleAll" panelheight="auto"
+						data-options="valueField:'id', textField:'text',editable:true"
+						name="language" editable="true" multiple="true"
+						style="width:230px;height:30px;line-height:35px;"></select></td>
+				</tr>
+				<tr>
+					<td><strong style="color: #FF0000">*</strong>查验员角色</td>
+					<td><select id="txtcyyrole" class="easyui-combobox"
+						panelheight="auto"
+						data-options="valueField:'id', textField:'text',editable:true"
+						name="language" editable="true"
+						style="width:230px;height:30px;line-height:35px;">
+							<option value="1">一级查验员</option>
+							<option value="2">二级查验员</option>
+							<option value="3">三级查验员</option>
+					</select></td>
+				</tr>
+				<tr>
+					<td><strong style="color: #FF0000">*</strong>部门</td>
+					<td><select id="txtDeparmentEdit" name="language"
+						style="width:230px;height:30px;line-height:35px;"></select></td>
+				</tr>
+			</table>
+		</div>
+	</form>
+    <script>
+		$(function() {
+			$("#txtroleAll").combobox();
+			//加载角色
+			GetRoleAll();
+			GetDepartment(2);
+		})
+		//加载角色下拉框
+		function GetRoleAll() {
+			$.ajax({
+				url : "../TRole/GetRoleBySelect?time=New Date()",
+				async : false,
+				success : function(data) {
+					$("#txtroleAll").empty();
+					if (data) {
+						data = $.parseJSON(data);
+						var combo = [];
+						for (var i = 0; i < data.result.content.length; i++) {
+							combo.push({
+								"text" : data.result.content[i].f_name,
+								"id" : data.result.content[i].f_id
+							});
+						}
+						$("#txtroleAll").combobox("loadData", combo).combobox("select", combo[0].id);
+	
+					} else {
+						$.messager.alert("警告", "获取角色信息失败！", "warning");
+					}
+				},
+				error : function(err) {
+					$.messager.alert("警告", "获取角色信息失败！", "warning");
+				}
+			})
+		}
+		//保存数据
+		function SaveUserInfo(id) {
+			var f_peoplename = $("#txtpeoplename").val();
+			if (f_peoplename == "") {
+				$.messager.alert("警告", "人员姓名不能为空！", "warning");
+				$("#txtpeoplename").next('span').find('input').focus();
+				return false;
+			}
+			var f_username = $("#txtusername").val();
+			if (f_username == "") {
+				$.messager.alert("警告", "用户名不能为空！", "warning");
+				$("#txtusername").next('span').find('input').focus();
+				return false;
+			}
+			var f_pwd = $("#txtpassword").val();
+			if (f_pwd == "") {
+				$.messager.alert("警告", "密码不能为空！", "warning");
+				$("#txtpassword").next('span').find('input').focus();
+				return false;
+			}
+			var f_idnumber = $("#txtidnumber").val();
+			if (f_idnumber == "") {
+				$("#txtidnumber").next('span').find('input').focus();
+				$.messager.alert("警告", "工作证件号不能为空！", "warning");
+	
+				return false;
+			}
+			var f_expirydate = $("#dtexpirydate").datetimebox("getValue");
+			if (f_expirydate == "") {
+				$.messager.alert("警告", "证件有效期不能为空！", "warning");
+				$("#f_expirydate").next('span').find('input').focus();
+				return false;
+			}
+			var f_idcard = $("#txtCardNo").val();
+			if (f_idcard != "") {
+				var pattern = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+				if (pattern.test(f_idcard) == false) {
+					$.messager.alert("警告", "身份证号格式不正确！", "warning");
+					return false;
+				}
+			}
+	
+			var roles = $("#txtroleAll").combobox("getValues").join(",");
+			var examine_id = $("#txtcyyrole").combobox("getValue");
+			var f_partmentid = $("#txtDeparmentEdit").combotree("getValue");
+			if (id) { 
+			var jsonData = {
+			        "f_id":id,
+					"f_peoplename" : f_peoplename,
+					"f_username" : f_username,
+					"f_idnumber" : f_idnumber,
+					"f_expirydate" : f_expirydate.replace(/-/g, '//'),
+					"f_idcard" : f_idcard,
+					"roleids" : roles,
+					"f_examine_id" : examine_id,
+					"f_partmentid" : f_partmentid,
+					"f_pwd" : f_pwd
+				}
+				$.ajax({
+					type : "POST",
+					url : "../TUser/UpdateTUser",
+					data : jsonData,
+					success : function(data) {
+						if (data) {
+							var data = $.parseJSON(data);
+							if (data.code == 0) {
+								$.messager.alert('提示', '' + data.result.content + '');
+								RefreshData();
+							} else {
+								$.messager.alert("警告", '' + data.error + '', "warning");
+								return false;
+							}
+						} else {
+							$.messager.alert("警告", "修改失败！", "warning");
+							return false;
+						}
+					},
+					error : function(err) {
+						$.messager.alert("警告", "修改失败！", "warning");
+						return false;
+					}
+				})
+			
+			} else { //新增
+				var jsonData = {
+					"f_peoplename" : f_peoplename,
+					"f_username" : f_username,
+					"f_idnumber" : f_idnumber,
+					"f_expirydate" : f_expirydate.replace(/-/g, '//'),
+					"f_idcard" : f_idcard,
+					"roleids" : roles,
+					"f_examine_id" : examine_id,
+					"f_partmentid" : f_partmentid,
+					"f_pwd" : f_pwd
+				}
+				$.ajax({
+					type : "POST",
+					url : "../TUser/AddTUser",
+					data : jsonData,
+					success : function(data) {
+						if (data) {
+							var data = $.parseJSON(data);
+							if (data.code == 0) {
+								$.messager.alert('提示', '' + data.result.content + '');
+								RefreshData();
+							} else {
+								$.messager.alert("警告", '' + data.error + '', "warning");
+								return false;
+							}
+						} else {
+							$.messager.alert("警告", "新增失败！", "warning");
+							return false;
+						}
+					},
+					error : function(err) {
+						$.messager.alert("警告", "新增失败！", "warning");
+						return false;
+					}
+				})
+			}
+		}
+		function GetUserInfo(id) {
+			if (id) {
+				$.ajax({
+					type : "get",
+					url : "../TUser/GetTUserById",
+					data : {
+						"Id" : id,
+						"time": new Date()
+					},
+					success : function(data) {
+						if (data) {
+							var obj = $.parseJSON(data).result.content;
+							$("#txtpeoplename").textbox("setValue",obj.f_peoplename);
+							$("#txtusername").textbox("setValue",obj.f_username);
+							$("#txtpassword").textbox("setValue",obj.f_pwd);
+							$("#txtidnumber").textbox("setValue",obj.f_idnumber);
+							$("#dtexpirydate").datebox("setValue", obj.f_expirydate);
+							$("#txtCardNo").textbox("setValue",obj.f_idcard);						
+							$("#txtroleAll").combobox("setValues", obj.roleids.split(","))
+							$("#txtcyyrole").combobox("setValue", obj.f_examine_id);
+							$("#txtDeparmentEdit").combotree("setValue", obj.f_partmentid);
+	
+						} else {
+							$.messager.alert("警告", "获取数据失败！", "warning");
+						}
+					},
+					error : function(err) {
+						$.messager.alert("警告", "获取数据失败！", "warning");
+					}
+				})
+			}
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>移动扫描支付系统</title>
+    <link href="staticfile/custom/darkgreen/css/base.css" rel="stylesheet">
+    <!-- <link rel="stylesheet" href="staticfile/custom/darkgreen/uimaker/easyui.css"> -->
+    <!-- <link rel="stylesheet" href="staticfile/custom/darkgreen/uimaker/icon.css"> -->
+    <!-- <link rel="stylesheet" href="staticfile/custom/darkgreen/fonts/iconfont.css"> -->
+    <link href="staticfile/custom/darkgreen/css/login/login.css"
+          rel="stylesheet">
+    <script src="privateJs/DES/crypto-js.js"></script>
+    <script src="staticfile/custom/darkgreen/uimaker/js/jquery.min.js"></script>
+    <script type="text/javascript"
+            src="staticfile/custom/darkgreen/jquery.easyui.min.js"></script>
+    <script>
+        $(function () {
+            $("#f_username").blur(function () {
+                if ($("#f_username").val() == "") {
+                    $("#checkinput").text("请输入用户名！");
+                    return false;
+                }
+                if ($("#f_pwd").val() == "") {
+                    $("#checkinput").text("请输入密码！");
+                    return false;
+                } else {
+                    $("#checkinput").text("登陆信息输入完成！");
+                    return false;
+
+                }
+
+            })
+            $("#f_pwd").blur(function () {
+                if ($("#f_username").val() == "") {
+                    $("#checkinput").text("请输入用户名！");
+                    return false;
+                }
+                if ($("#f_pwd").val() == "") {
+                    $("#checkinput").text("请输入密码！");
+                    return false;
+                } else {
+                    $("#checkinput").text("登陆信息输入完成！");
+                    return false;
+
+                }
+
+            })
+        });
+        function login() {
+            if ($("#f_username").val() == "") {
+                $("#checkinput").text("请输入用户名！");
+                return false;
+            }
+            if ($("#f_pwd").val() == "") {
+                $("#checkinput").text("请输入密码！");
+                return false;
+            }
+
+            $.ajax({
+                url: "../PDAInspection/TUser/LoginUser",
+                type: "get",
+                cache: false,
+                contentType: "application/json;charset=UTF-8",
+                data: {
+                    "f_username": $("#f_username").val(),
+                    "f_pwd": encryptByDESModeCBC($("#f_pwd").val(), 'ESICESIC'),
+                    "time": (new Date()).valueOf()
+                },
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 0) {
+                        $("#checkinput").text("登陆成功！");
+                        window.location = 'main.html'
+                    } else {
+                        $("#checkinput").text("" + result.error + "");
+                    }
+                },
+                error: function (xmlHttpRequest, status, erroType) {
+                    $("#checkinput").text("获取数据失败！");
+                }
+            });
+        }
+        //des加密
+        function encryptByDESModeCBC(message, key) {
+            var keyHex = CryptoJS.enc.Utf8.parse(key);
+            var ivHex = CryptoJS.enc.Utf8.parse(key);
+            var encrypted = CryptoJS.DES.encrypt(message, keyHex, {
+                iv: ivHex,
+                mode: CryptoJS.mode.CBC,
+                padding: CryptoJS.pad.Pkcs7
+            });
+            return encrypted.ciphertext.toString().toUpperCase()
+        }
+    </script>
+</head>
+
+<body>
+    <div class="login-hd">
+        <div class="left-bg"></div>
+        <div class="right-bg"></div>
+        <div class="hd-inner">
+            <span class="logo"></span> <span class="split"></span> <span class="sys-name">移动扫描支付系统</span>
+        </div>
+    </div>
+    <div class="login-bd">
+        <div class="bd-inner">
+            <div class="inner-wrap">
+                <div class="lg-zone">
+                    <div class="lg-box" style="border:2px solid #ddd">
+                        <div class="lg-label">
+                            <h4>用户登录</h4>
+                        </div>
+                        <div class="alert alert-error">
+                            <i class="iconfont">&#xe62e;</i> <span id="checkinput">请输入登陆信息</span>
+                        </div>
+                        <form>
+                            <div class="lg-username input-item clearfix">
+                                <i class="iconfont">&#xe60d;</i> <input style=" vertical-align:middle;line-height:40px;" type="text"
+                                                                        placeholder="用户名" id="f_username">
+                            </div>
+                            <div class="lg-password input-item clearfix">
+                                <i class="iconfont">&#xe634;</i> <input style="vertical-align:middle;line-height:40px;" type="password"
+                                                                        placeholder="密码" id="f_pwd">
+                            </div>
+                            <div class="tips clearfix"></div>
+                            <div class="enter">
+                                <a style="margin-left:30%" href="javascript:void(0);"
+                                   class="purchaser" onclick='login()'>登录</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="lg-poster"></div>
+            </div>
+        </div>
+    </div>
+    <div class="login-ft">
+        <div class="ft-inner">
+            <div class="about-us">
+                <a href="javascript:;">关于我们</a> <a href="javascript:;">法律声明</a> <a href="javascript:;">服务条款</a> <a href="javascript:;">联系方式</a>
+            </div>
+            <div class="address">江苏省交警总队&nbsp;&nbsp;&nbsp;Copyright&nbsp;©&nbsp;2018&nbsp;-&nbsp;2020&nbsp;&nbsp;版权所有</div>
+            <div class="other-info">建议使用IE8及以上版本浏览器&nbsp;</div>
+        </div>
+    </div>
+</body>
+</html>

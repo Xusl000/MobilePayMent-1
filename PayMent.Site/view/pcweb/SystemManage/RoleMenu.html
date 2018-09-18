@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>RoleMenu.html</title>
+
+<meta name="keywords" content="keyword1,keyword2,keyword3">
+<meta name="description" content="this is my page">
+<meta name="content-type" content="text/html; charset=UTF-8">
+
+<!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+
+</head>
+
+<body>
+
+	<div class="container" style="margin-left: 70px">
+		<ul id="jstree_function" class="easyui-tree" animate="true"
+			dnd="false" /></ul>
+	</div>
+	<script>
+	    //加载菜单权限
+		function LoadFunction(roleid) {
+			$.ajax({
+				type : "get",
+				url : "../TMenu/GetFunction",
+				data : {
+					"roleid" : roleid,
+					"time" : new Date()
+				},
+				success : function(data) {
+					var zNodes = $.parseJSON(data);
+					if (zNodes.result) {
+						$('#jstree_function').tree({
+							checkbox : true,
+							state : 'closed',
+							data : zNodes.content
+						});
+					} else {
+						$.messager.alert("警告", "获取菜单失败！", "warning");
+					}
+				},
+				error : function(err) {
+					$.messager.alert("警告", "获取菜单失败！", "warning");
+				}
+			})
+	
+		}
+	    //保存角色权限
+		function SaveFunction(id) {
+			var nodes = $('#jstree_function').tree('getChecked');
+			var chkIds = '';
+			for (var i = 0; i < nodes.length; i++) {
+				var chkid = nodes[i].id;
+				if (chkIds == "") {
+					chkIds = chkid;
+				} else {
+					chkIds += "," + chkid;
+				}
+			}
+	        $.ajax({
+                url: "../TRoleMenu/DeleteRoleMenuByeoleid",
+                data: { "chkIds": chkIds, "roleid": id,"time":new Date()},
+                success: function (data) {
+                     if (data) {
+							var data = $.parseJSON(data);
+							if (data.code == 0) {
+							   $('#roleMenuinfodlg').dialog('destroy');
+								
+							} else {
+								$.messager.alert("警告", '' + data.error + '', "warning");
+							}
+						} else {
+							$.messager.alert("警告", "修改失败！", "warning");
+						}
+                },
+                error: function (err) {
+                   $.messager.alert("警告", "修改失败！", "warning");
+                }
+            });
+		}
+	</script>
+</body>
+</html>

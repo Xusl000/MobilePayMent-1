@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <title>角色列表</title>
+ <link href="../staticfile/custom/darkgreen/css/basic.css" rel="stylesheet">
+<link rel="stylesheet" href="../staticfile/custom/darkgreen/uimaker/easyui.css">
+<link rel="stylesheet" href="../staticfile/custom/darkgreen/uimaker/icon.css">
+<link rel="stylesheet" href="../staticfile/custom/darkgreen/css/providers1.css">
+<script type="text/javascript" src="../staticfile/custom/darkgreen/jquery.min.js"></script>
+<script type="text/javascript" src="../staticfile/custom/darkgreen/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../staticfile/custom/darkgreen/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../privateJs/SystemManage/RoleManage.js"></script>
+</head>
+<body>
+	<div class="container">
+       <table id="dg_func" style="width:100%;height:700px" title="角色列表" data-options="
+                rownumbers:true,
+                singleSelect:false,
+                autoRowHeight:true,
+                pagination:true,
+                fitColumns:true,
+                striped:true,
+                checkOnSelect:false,
+                selectOnCheck:false,
+                collapsible:true,
+                fit: false, 
+                toolbar:'#tb' ">
+            <thead>
+                <tr>
+                    <th field="f_name" width="110" align='center'>角色名称</th>
+                    <th field="f_info" width="126" align='center'>角色说明</th>
+                     <th field="f_sys_item" width="126" align='center'>所属业务</th>
+                    <th field="f_createtime" width="112" align='center'>创建时间</th>
+                    <th field="op"  width="100" align='center' formatter="formatterOper">操作</th>
+                </tr>
+            </thead>
+        </table>
+       <div id="tb" style="padding:0 30px;">
+        <div class="conditions">
+            <span class="con-span">角色名: </span><input id="txtrolename" class="easyui-textbox" type="text" name="name" style="width:166px;height:35px;line-height:35px;"></input>
+            <a id="btnSeach" href="#" class="easyui-linkbutton" iconCls="icon-search" data-options="selected:true">查询</a>
+            <a id="renfer" href="#" class="easyui-linkbutton" iconCls="icon-reload" >重置</a>
+            <a href="#" class="easyui-linkbutton add" iconCls="icon-add" onclick="add(0)" id="Add">新增</a>
+        </div>
+      </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,293 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="utf-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <title>PDA管理系统</title> 
+<link href="staticfile/custom/darkgreen/uimaker/css/base.css" rel="stylesheet">
+<link href="staticfile/custom/darkgreen/css/platform.css" rel="stylesheet">
+<link rel="stylesheet" href="staticfile/custom/darkgreen/uimaker/easyui.css">
+<link rel="stylesheet" href="staticfile/custom/darkgreen/uimaker/icon.css">
+<link rel="stylesheet" href="staticfile/custom/darkgreen/fonts/iconfont.css">
+<link rel="stylesheet" type="text/css" href="staticfile/custom/darkgreen/css/process.css">
+<style type="text/css">
+.pf-li{
+	float: left;
+    height: 70px;
+    color: #fff;
+    padding: 0 15px;
+    border-right: 1px solid #198b25;
+    cursor:pointer;
+    line-height: 70px;
+}
+.pf-shortcut{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+    font-size: 100%;
+    vertical-align: baseline;
+}
+.pf-li a{
+    color: #fff;
+    text-decoration: none;
+}
+</style>
+</head> 
+<body>
+    <div class="container">
+        <div id="pf-hd">
+            <div class="pf-logo">
+                <img src="staticfile/custom/darkgreen/images/main/main_logo.png" alt="logo">
+            </div>
+            
+            <div class="pf-nav-wrap">
+              <!--<div class="pf-nav-ww">-->
+              <div class="pf-nav-ww">
+               <!-- 快捷菜单 -->
+                <ul class="pf-shortcut">
+                  <!-- 	<li class="pf-li"><a href="javascript:void(0);" data-src="ReportManage/CtQueueReport.html" data-title="查验人员工作统计">查验人员工作统计</a></li>
+                	<li class="pf-li"><a href="javascript:void(0);" data-src="ReportManage/ApproveShenheReport.html" data-title="审核人员工作统计">审核人员工作统计</a></li>
+                	<li class="pf-li"><a href="javascript:void(0);" data-src="ReportManage/PartmentWorkReport.html" data-title="部门工作统计">部门工作统计</a></li> -->
+                </ul>
+              </div>
+            </div>
+            
+            <div class="pf-user">
+            	<span class="msgts">0</span>
+                <div class="pf-user-photo">
+                    <img id="loginuserphoto" src="staticfile/custom/darkgreen/images/main/user.png" alt="">                   
+                </div>
+                <h4 id="loginusername" class="pf-user-name ellipsis">用户名</h4>
+                <i class="iconfont xiala">&#xe607;</i>
+
+                <div class="pf-user-panel">
+                    <ul class="pf-user-opt">
+                        <li class="pf-logout">
+                            <a href="#">
+                                <i class="iconfont">&#xe60e;</i>
+                                <span class="pf-opt-name">退出</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="pf-bd">
+            <div class="pf-sider-wrap">
+            </div>
+            
+
+            <div id="pf-page">
+                <div id="easyui-tabs123" class="easyui-tabs1" style="width:100%;height:100%;">
+                  <!-- <div title="首页" style="padding:10px 5px 5px 10px;">
+                    <iframe class="page-iframe" src="Home.html" frameborder="no"   border="no" height="100%" width="100%" scrolling="auto"></iframe>
+                  </div> -->
+                </div>
+            </div>
+        </div>
+
+        <div id="pf-ft">
+            <div class="system-name">
+              <i class="iconfont">&#xe6fe;</i>
+              <span>PDA管理系统&nbsp;v1.0</span>
+            </div>
+            <div class="copyright-name">
+              <span>CopyRight&nbsp;2016&nbsp;&nbsp;苏大信科&nbsp;版权所有</span>
+              <i class="iconfont" >&#xe6ff;</i>
+            </div>
+        </div>
+    </div>
+
+    <div id="mm" class="easyui-menu tabs-menu" style="width:120px;display:none;">
+         <div id="mm-tabclose">关闭</div>
+         <div id="mm-tabcloseall">关闭所有</div>
+         <div id="mm-tabcloseother">关闭其他</div> 
+    </div>
+    <script type="text/javascript" src="staticfile/custom/darkgreen/jquery.min.js"></script>
+    <script type="text/javascript" src="staticfile/custom/darkgreen/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="privateJs/main.js"></script>
+    <script type="text/javascript" src="privateJs/menu.js"></script>
+ 
+  
+    
+    <script type="text/javascript">
+    getLoginUser();
+    $(window).resize(function(){
+          $('.tabs-panels').height($("#pf-page").height()-46);
+          $('.panel-body').not('.messager-body').height($(".easyui-dialog").height)
+    }).resize();
+
+    var page = 0,
+        pages = ($('.pf-nav').height() / 70) - 1;
+
+    if(pages === 0){
+      $('.pf-nav-prev,.pf-nav-next').hide();
+    }
+    $(document).on('click', '.pf-nav-prev,.pf-nav-next', function(){
+
+
+      if($(this).hasClass('disabled')) return;
+      if($(this).hasClass('pf-nav-next')){
+        page++;
+        $('.pf-nav').stop().animate({'margin-top': -70*page}, 200);
+        if(page == pages){
+          $(this).addClass('disabled');
+          $('.pf-nav-prev').removeClass('disabled');
+        }else{
+          $('.pf-nav-prev').removeClass('disabled');
+        }
+        
+      }else{
+        page--;
+        $('.pf-nav').stop().animate({'margin-top': -70*page}, 200);
+        if(page == 0){
+          $(this).addClass('disabled');
+          $('.pf-nav-next').removeClass('disabled');
+        }else{
+          $('.pf-nav-next').removeClass('disabled');
+        }
+        
+      }
+    })
+
+    // setTimeout(function(){
+    //    $('.tabs-panels').height($("#pf-page").height()-46);
+    //    $('.panel-body').height($("#pf-page").height()-76)
+    // }, 200)
+    function replace(doc, style) {
+
+
+      $('link', doc).each(function(index, one) {
+
+        var path = $(one).attr('href').replace(/(static\/)\w+(\/css)/g, '$1' + style + '$2').replace(/(custom\/)\w+(\/)/g, '$1' + style + '$2'),
+          sheet;
+
+        if(doc.createStyleSheet) {
+
+          sheet = doc.createStyleSheet(path);
+          setTimeout(function() {
+
+            $(one).remove();
+
+          }, 500)
+
+        } else {
+
+          sheet = $('<link rel="stylesheet" type="text/css" href="' + path + '" />').appendTo($('head', doc));
+          sheet = sheet[0];
+          sheet.onload = function() {
+
+            $(one).remove();
+
+          }
+
+        }
+
+      })
+
+      $('img', doc).each(function(index, one) {
+
+        var path = $(one).attr('src').replace(/(static\/)\w+(\/images)/g, '$1' + style + '$2');
+
+        $(one).attr('src', path);
+
+      })
+
+    }
+    $('.skin-item').click(function() {
+
+      var color = $(this).data('color');
+      replaceAll(color);
+
+    })
+    function replaceAll(style) {
+
+      $('iframe').each(function(index, one) {
+
+        try {
+
+          replace(one.contentWindow.document, style)
+
+        } catch(e) {
+
+          console.warn('origin cross');
+
+        }
+
+      })
+
+      replace(document, style)
+
+    }
+    function getLoginUser(){
+    	$.ajax({
+			url:"../PDAInspection/TUser/GetLoginUser",
+			type:"get",
+			  // 将XHR对象的withCredentials设为true  
+			contentType:"application/json;charset=UTF-8",
+			dataType:"json",
+			success:function(result){
+				if(result.code==0){
+					if(result.result.content.f_photo){
+						$("#loginuserphoto").attr("src",result.result.content.f_photo);
+					}
+					$("#loginusername").text(result.result.content.f_peoplename);
+				}else{
+					$.messager.alert("警告", result.error, "warning");
+				}
+			},
+			 error: function (xmlHttpRequest, status, erroType) {
+			   		$.messager.alert("警告", "获取数据失败！", "warning");
+                  }
+			});
+    }
+    
+    $(".pf-nav-ww").on("click","li",function(){
+    
+    	var index = $(".sider-nav .pf-menu-title").closest('.pf-sider').attr('arrindex');
+    	var title = $(this).children().data("title");
+    	var src = $(this).children().data("src");
+       	if($('.easyui-tabs1[arrindex='+ index +']').tabs('exists', title)){
+       		$('.easyui-tabs1[arrindex='+ index +']').tabs('select', title)
+       		return false;
+       	}
+       	$('.easyui-tabs1[arrindex='+ index +']').tabs('add',{
+			title: title,
+			content: '<iframe class="page-iframe" src="'+ src +'" frameborder="no" border="no" height="100%" width="100%" scrolling="auto"></iframe>',
+			closable: true
+		});
+    })
+    showSHortcut();
+    
+    function showSHortcut(){
+   	 	$.ajax({
+			url:"../PDAInspection/TMenu/GetFunctionShortcut",
+			type:"get",
+			contentType:"application/json;charset=UTF-8",
+			dataType:"json",
+			success:function(result){
+				if(result.result){
+					var htr='';
+					for(var i=0;i<result.content.length;i++){
+						htr+='<li class="pf-li"><a href="javascript:void(0);" data-src="'+result.content[i].f_url+'" data-title="'+result.content[i].f_name+'">'+result.content[i].f_name+'</a></li>'
+					}
+					$(".pf-shortcut").html(htr);
+				}else{
+					$.messager.alert("警告", result.error, "warning");
+				}
+			},
+			 error: function (xmlHttpRequest, status, erroType) {
+			   		$.messager.alert("警告", "获取数据失败！", "warning");
+                  }
+			});
+    
+    	
+    	
+    }
+    </script>
+</body> 
+</html>

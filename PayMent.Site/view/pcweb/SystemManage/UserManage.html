@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <title>用户列表</title>
+ <link rel="stylesheet" href="../staticfile/custom/darkgreen/uimaker/easyui.css">
+ <link rel="stylesheet" href="../staticfile/custom/darkgreen/css/providers1.css">
+<link rel="stylesheet" href="../staticfile/custom/darkgreen/uimaker/icon.css">
+<script type="text/javascript" src="../staticfile/custom/darkgreen/jquery.min.js"></script>
+<script type="text/javascript" src="../staticfile/custom/darkgreen/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../staticfile/custom/darkgreen/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../privateJs/SystemManage/UserManage.js"></script>
+</head>
+<body>
+	<div class="container">
+       <table id="dg_func" class="easyui-datagrid" style="width:100%;height:700px" title="全体供应商列表" data-options="
+                rownumbers:true,
+                singleSelect:false,
+                autoRowHeight:true,
+                pagination:true,
+                fitColumns:true,
+                striped:true,
+                checkOnSelect:false,
+                selectOnCheck:false,
+                collapsible:true,
+                fit: false, 
+                toolbar:'#tb' ">
+            <thead>
+                <tr>
+                    <th field="f_peoplename" width="110" align='center'>人员姓名</th>
+                    <th field="f_username" width="126" align='center'>用户名</th>
+                    <th field="f_idnumber" width="112" align='center'>工作证件号</th>
+                    <th field="f_idcard" width="112" align='center'>身份证号</th>
+                    <th field="f_rolename" width="170" align='center'>角色</th>
+                    <th field="f_depname" width="170" align='center'>所属单位</th>
+                    <th field="f_expirydate" width="170" align='center'>有效期</th>
+                    <th field="f_statename" width="130" align='center'>状态</th>
+                    <th field="op"  width="130" align='center' formatter="formatterOper">操作</th>
+                </tr>
+            </thead>
+        </table>
+       <div id="tb" style="padding:0 30px;">
+        <div class="conditions">
+            <span class="con-span">姓名: </span><input id="txtName" class="easyui-textbox" type="text" name="code" style="width:166px;height:35px;line-height:35px;"></input>
+            <span class="con-span">用户名: </span><input id="txtUsername" class="easyui-textbox" type="text" name="name" style="width:166px;height:35px;line-height:35px;"></input>
+            <a id="btnSeach" href="#" class="easyui-linkbutton" iconCls="icon-search" data-options="selected:true">查询</a>
+            <a id="renfer" href="#" class="easyui-linkbutton" iconCls="icon-reload" >重置</a>
+            <a href="#" class="easyui-linkbutton add" iconCls="icon-add" onclick="add(0)" id="Add">新增</a>
+            <a href="#" class="easyui-linkbutton more" iconCls="icon-more">更多</a>
+        </div>
+        <div class="conditions hide">
+            <span class="con-span">角色: </span><select id="txtrole" class="easyui-combobox"  panelheight="auto" data-options="valueField:'id', textField:'text',editable:true" name="language" editable="true"  style="height:35px;width:166px;"><option value="-1">全部</option></select>
+            <!--<input id="txtrole"  class="easyui-combobox" type="text" name="code" style="width:166px;height:35px;line-height:35px;"></input> -->
+            <span class="con-span">部门: </span>
+            <select id="txtDeparment" class="easyui-combobox" name="language" style="height:35px;width:266px;"></select>
+            <input type="checkbox" id="iszbm">包含下级
+            <!-- <input id="txtDeparment" editable="false" name="state" style="height:35px;width:166px;" /> -->    
+        </div>
+        
+        <div class="opt-buttons">
+         <!-- <a href="#" class="easyui-linkbutton" data-options="selected:true" id="Add">新增</a> -->         
+        </div>
+      </div>
+    </div>
+
+</body>
+</html>

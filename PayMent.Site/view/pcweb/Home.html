@@ -1,0 +1,450 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="utf-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <title>主页</title> 
+
+<link href="staticfile/custom/darkgreen/uimaker/css/base.css" rel="stylesheet">
+<link rel="stylesheet" href="staticfile/custom/darkgreen/uimaker/easyui.css">
+<link rel="stylesheet" href="staticfile/custom/darkgreen/uimaker/icon.css">
+<link rel="stylesheet" href="staticfile/custom/darkgreen/fonts/iconfont.css">
+<link rel="stylesheet" href="staticfile/Home.css">
+</head> 
+<body>
+    <div class="container">
+        <div id="bd">
+            <div class="bd-content">
+                <div class="right-zone">
+                </div>
+                <div class="center-part">
+                    <div class="center-items todo">
+                        <div class="calendar-part">
+                             <div class="easyui-calendar" style="width:205px;height:231px;"></div>
+                        </div>
+                    </div>
+                    <div class="center-items chart0 clearfix">
+                        <div class="chart0-item">
+                            <div class="item-inner">
+                                <div class="item-content">
+                                    <div class="content-hd">查验人员工作一周统计
+                                    <span class="con-span">查验人: </span>
+                                    <input id="search_f_peoplename0" class="easyui-textbox" type="text" name="code" style="width:166px;height:35px;line-height:35px;" />
+                                    <a href="#"class="easyui-linkbutton" iconCls="icon-search"data-options="selected:true" onclick="getCTQueueAllReport()">查询</a>                               
+                                    </div>
+                                    <div class="chart-chart" id="chart0"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chart0-item">
+                            <div class="item-inner">
+                                <div class="item-content">
+                                    <div class="content-hd">审核人员工作一周统计
+                                    <span class="con-span">审核人: </span>
+                                    <input id="search_f_peoplename1" class="easyui-textbox" type="text" name="code" style="width:166px;height:35px;line-height:35px;" />
+                                    <a href="#"class="easyui-linkbutton" iconCls="icon-search"data-options="selected:true" onclick="getCtApproveReport()">查询</a> 
+                                    </div>
+                                    <div class="chart-chart" id="chart1"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="center-items chart1">
+                        <div class="chart1-inner">
+                             <div class="item-hd">部门工作一周统计
+                             <span class="con-span">部门名称: </span>
+                             <input id="search_f_name" class="easyui-textbox" type="text" name="code" style="width:166px;height:35px;line-height:35px;" />
+                                    <a href="#"class="easyui-linkbutton" iconCls="icon-search"data-options="selected:true" onclick="getHomeDepartQueueReport()">查询</a> 
+                             </div>
+                             <div class="chart1-chart" id="chart3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="staticfile/custom/darkgreen/jquery.min.js"></script>
+    <script type="text/javascript" src="staticfile/custom/darkgreen/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="staticfile/custom/darkgreen/js/echarts-all.js"></script>
+    
+    <script type="text/javascript">
+    var myChart0;
+    var myChart1;
+    var myChart3;
+    var char0_data=[];
+    var char1_data0=[];
+    var char1_data1=[];
+    var char1_data2=[];
+    var char1_data3=[];
+    var char1_xAxisdata=[];
+    var char3_data=[];
+    getCTQueueAllReport();
+    getCtApproveReport();
+	getHomeDepartQueueReport();
+    $(document).ready(function(){
+        var option0 = {
+            tooltip : {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            legend: {
+                orient : 'vertical',
+                x : 'left',
+                data:['新车','二手车','外地车转入','重点业务'],
+                show:false
+            },
+            toolbox: {
+                show : false,
+                feature : {
+                    mark : {show: true},
+                    dataView : {show: true, readOnly: false},
+                    magicType : {
+                        show: true, 
+                        type: ['pie', 'funnel'],
+                        option: {
+                            funnel: {
+                                x: '25%',
+                                width: '50%',
+                                funnelAlign: 'center',
+                                max: 1548
+                            }
+                        }
+                    },
+                    restore : {show: true},
+                    saveAsImage : {show: true}
+                }
+            },
+            calculable : true,
+            series : [
+                { name:'查验人员工作TOP一周统计',
+                  type:'pie',
+                  radius : ['50%', '70%'],
+                  itemStyle : {
+                  normal : {
+                         label : {
+                             show : false
+                         },
+                         labelLine : {
+                             show : false
+                         }
+                  },
+                  emphasis : {
+                         label : {
+                             show : true,
+                             position : 'center',
+                             textStyle : {
+                                 fontSize : '30',
+                                 fontWeight : 'bold'
+                             }
+                         }
+                     }
+                 },
+                 data:char0_data
+               }
+            ]
+        };
+
+      myChart0 = echarts.init(document.getElementById('chart0'));
+      myChart0.setOption(option0);
+
+      //chart1
+     var option1 = {
+            tooltip : {
+                trigger: 'axis'
+            },
+            legend: {
+                data:['新车','二手车','外地车转入','重点业务'],
+                show:false
+            },
+            toolbox: {
+                show : false,
+                feature : {
+                    mark : {show: true},
+                    dataView : {show: true, readOnly: false},
+                    magicType : {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+                    restore : {show: true},
+                    saveAsImage : {show: true}
+                }
+            },
+            calculable : true,
+            xAxis : [
+                {
+                    type : 'category',
+                    boundaryGap : false,
+                    data : char1_xAxisdata
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value'
+                }
+            ],
+            
+            series : [
+                {
+                    name:'新车',
+                    type:'line',
+                    stack: '总量',
+                    data:char1_data0
+                },
+                {
+                    name:'二手车',
+                    type:'line',
+                    stack: '总量',
+                    data:char1_data1
+                },
+                {
+                    name:'外地车转入',
+                    type:'line',
+                    stack: '总量',
+                    data:char1_data2
+                },
+                {
+                    name:'重点业务',
+                    type:'line',
+                    stack: '总量',
+                    data:char1_data3
+                }
+            ],
+             
+        };
+        myChart1 = echarts.init(document.getElementById('chart1'));
+        myChart1.setOption(option1);
+
+        var option3 = {
+            tooltip : {
+                trigger: 'axis'
+            },
+            legend: {
+                data:['蒸发量'],
+                show:false
+            },
+            toolbox: {
+                show : false,
+                feature : {
+                    mark : {show: true},
+                    dataView : {show: true, readOnly: false},
+                    magicType : {show: true, type: ['line', 'bar']},
+                    restore : {show: true},
+                    saveAsImage : {show: true}
+                }
+            },
+            calculable : true,
+            xAxis : [
+                {
+                    type : 'category',
+                	data:['新车','二手车','外地车转入','重点业务']
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value'
+                }
+            ],
+            series : [
+                {
+                    name:'',
+                    type:'bar',
+                    data:char3_data,
+                    markPoint : {
+                        data : [
+                            {type : 'max', name: '最大值'},
+                            {type : 'min', name: '最小值'}
+                        ]
+                    },
+                    markLine : {
+                        data : [
+                            {type : 'average', name: '平均值'}
+                        ]
+                    }
+                }
+            ]
+        };
+
+        myChart3 = echarts.init(document.getElementById('chart3'));
+        myChart3.setOption(option3);     
+    });
+   //获取查验人员工作统计接口
+   function  getCTQueueAllReport(){
+	    var date = new Date();
+	    var seperator1 = "/";
+	    var year = date.getFullYear();
+	    var month = date.getMonth() + 1;
+	    var strDate = date.getDate();
+	    var startdate = year + seperator1 + month + seperator1 + 1;
+	    var enddate = year + seperator1 + month + seperator1 + strDate;
+		var search_f_peoplename0 = $.trim($("#search_f_peoplename0").val());
+    	$.ajax({
+			url : "../PDAInspection/CtQueue/QueryAllCtQueueReport" + "?timestamp=" + new Date().getTime(),
+			type : "get",
+			async : false,
+			dataType:"json",
+			data : {
+				"f_peoplename" : search_f_peoplename0,
+				"startdate" : startdate,
+				"enddate" : enddate
+			},
+			success : function(result) {
+				if(result.code==0){
+				char0_data=[{value:result.result.content.newcartrade_num, name:'新车'},
+                        {value:result.result.content.cartrade_num, name:'二手车'},
+                        {value:result.result.content.cartransferin_num, name:'外地车转入'},
+                        {value:result.result.content.keybusiness_num, name:'重点业务'}
+                ]  
+					
+				}else{
+					char0_data=[{value:'0', name:'新车'},
+                        {value:'0', name:'二手车'},
+                        {value:'0', name:'外地车转入'},
+                        {value:'0', name:'重点业务'}
+                        ]
+				}
+				 
+                refreshmyChart0Data(char0_data);
+			},
+			error : function(err) {
+				$.messager.alert("警告", "获取数据失败！", "warning");
+			}
+		})
+   	}
+    //刷新查验人员工作统计     
+	function refreshmyChart0Data(data){
+	     if(!myChart0){
+	          return;
+	     }
+	     
+	     //更新数据
+	      var option = myChart0.getOption();
+	      option.series[0].data = data;   
+	      myChart0.setOption(option);    
+	}  
+	//调用审核人员工作统计
+	function getCtApproveReport(){
+		QueryAllCtApproveReport(0);
+		QueryAllCtApproveReport(1);
+		QueryAllCtApproveReport(2);
+		QueryAllCtApproveReport(3);
+		var date7 = new Date().getTime();
+		var date1 = date7-(24*60*60*1000*7);
+		var date= new Date(date1);
+		char1_xAxisdata=[];
+		var m = new Date(date1).getMonth();
+			m = m <10?m+1:m;
+		char1_xAxisdata.push(m+'.'+date.getDate());
+		for(var i=0;i<6;i++){
+			m = new Date(date1).getMonth();
+			m = m <10?m+1:m;
+			char1_xAxisdata.push(m+'.'+new Date(date.setHours(24)).getDate());
+		}
+		
+	}	
+	//审核人员工作
+	function  QueryAllCtApproveReport(x){
+		var business_type;
+		if(x==0){
+			business_type='NewCarTrade';
+		}else if(x==1){
+			business_type='CarTrade';
+		}else if(x==2){
+			business_type='CarTransferIn';
+		}else{
+			business_type='KeyBusiness';
+		}
+		var search_f_peoplename1 = $.trim($("#search_f_peoplename1").val());
+    	$.ajax({
+			url : "../PDAInspection/CtApprove/QueryAllCtApproveReport" + "?timestamp=" + new Date().getTime(),
+			type : "get",
+			async : false,
+			dataType:"json",
+			data : {
+				"f_peoplename" : search_f_peoplename1,
+				"business_type" : business_type
+			},
+			success : function(result) {
+				var datax=[result.result.content.day1count,
+				result.result.content.day2count,
+				result.result.content.day3count,
+				result.result.content.day4count,
+				result.result.content.day5count,
+				result.result.content.day6count,
+				result.result.content.day7count,
+				]  
+				if(x==0){
+					char1_data0=datax;
+				}else if(x==1){
+					char1_data1=datax;
+				}else if(x==2){
+					char1_data2=datax;
+				}else{
+					char1_data3=datax;
+				}
+				
+				refreshmyChart1Data(x,datax);
+			},
+			error : function(err) {
+				$.messager.alert("警告", "获取数据失败！", "warning");
+			}
+		})
+   	}
+   	//审核人员工作统计刷新
+	function refreshmyChart1Data(x,data){
+	     if(!myChart1){
+	          return;
+	     }
+	     
+	     
+	     //更新数据
+	      var option = myChart1.getOption();
+	      option.series[x].data = data;   
+	      myChart1.setOption(option);    
+	} 
+
+
+//部门工作
+function  getHomeDepartQueueReport(){
+		var search_f_name = $.trim($("#search_f_name").val());
+    	$.ajax({
+			url : "../PDAInspection/CtQueue/HomeDepartQueueReport" + "?timestamp=" + new Date().getTime(),
+			type : "get",
+			async : false,
+			dataType:"json",
+			data : {
+				"f_name" : search_f_name
+			},
+			success : function(result) {
+				if(result.code==0){
+				char3_data=[result.result.content.num1,
+				result.result.content.num2,
+				result.result.content.num3,
+				result.result.content.num4,
+                ]  
+					
+				}else{
+					char3_data=[0,0,0,0]
+				}
+				 
+                refreshmyChart3Data(char3_data);
+			},
+			error : function(err) {
+				$.messager.alert("警告", "获取数据失败！", "warning");
+			}
+		})
+   	}
+   	
+   	
+   	function refreshmyChart3Data(data){
+	     if(!myChart3){
+	          return;
+	     }
+	     
+	     
+	     //更新数据
+	      var option = myChart3.getOption();
+	      option.series[0].data = data;   
+	      myChart3.setOption(option);    
+	} 
+
+                  
+    </script>
+</body> 
+</html>

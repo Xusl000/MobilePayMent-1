@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>UserEdit.html</title>
+
+<meta name="keywords" content="keyword1,keyword2,keyword3">
+<meta name="description" content="this is my page">
+<meta name="content-type" content="text/html; charset=UTF-8">
+
+<!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+
+</head>
+
+<body>
+
+	
+	<form id="form1">
+		<div>
+			<table cellpadding="10" style="margin-left: 50px">
+				<tr>
+					<td><strong style="color: #FF0000">*</strong>角色名称:</td>
+					<td><input id="txtrolenameEdit" class="easyui-textbox"
+						style="width:230px;height:30px;line-height:35px;" /></td>
+				</tr>
+				<tr>
+					<td><strong style="color: #FF0000">*</strong>所属业务</td>
+					<td><select id="txtItem" panelheight="auto"
+						data-options="valueField:'id', textField:'text',editable:true"
+						name="language" editable="true" multiple="true"
+						style="width:230px;height:30px;line-height:35px;"></select></td>
+				</tr>
+				<tr>
+					<td>角色说明:</td>
+					<td><input id="txtRoleinfo" class="easyui-textbox" data-options="multiline:true"
+						style="width:230px;height:100px;line-height:35px;" /></td>
+				</tr>
+			</table>
+		</div>
+	</form>
+    <script>
+		$(function() {
+			$("#txtItem").combobox();
+			//加载角色
+			GetItem();
+		})
+		//加载业务类型下拉框
+		function GetItem() {
+			$.ajax({
+				url : "../SysCode/GetCodeListByTypeCode",
+				async : false,
+				data : {
+					"typecode" : "OperateType",
+					"time" : new Date()
+				}, 
+				success : function(data) {
+					$("#txtItem").empty();
+					if (data) {
+						data = $.parseJSON(data);
+						var combo = [];
+						for (var i = 0; i < data.result.content.length; i++) {
+							combo.push({
+								"text" : data.result.content[i].code_name,
+								"id" : data.result.content[i].code_value
+							});
+						}
+						$("#txtItem").combobox("loadData", combo).combobox("select", combo[0].id);
+	
+					} else {
+						$.messager.alert("警告", "获取角色信息失败！", "warning");
+					}
+				},
+				error : function(err) {
+					$.messager.alert("警告", "获取角色信息失败！", "warning");
+				}
+			})
+		}
+		//保存数据
+		function SaveRoleInfo(id) {
+	
+			var f_name = $("#txtrolenameEdit").textbox("getValue");
+			if (f_name == "") {
+				$.messager.alert("警告", "角色名不能为空！", "warning");
+				$("#txtrolenameEdit").next('span').find('input').focus();
+				return false;
+			}
+			var f_info = $("#txtRoleinfo").val();
+			var f_sys_item = $("#txtItem").combobox("getValue");
+			if (id) { 
+			var jsonData = {
+			        "f_id":id,
+					"f_name" : f_name,
+					"f_info" : f_info,
+					"f_sys_item" : f_sys_item	
+				}
+				$.ajax({
+					type : "POST",
+					url : "../TRole/UpdateTRole",
+					data : jsonData,
+					success : function(data) {
+						if (data) {
+							var data = $.parseJSON(data);
+							if (data.code == 0) {
+								$.messager.alert('提示', '' + data.result.content + '');
+								RefreshData();
+							} else {
+								$.messager.alert("警告", '' + data.error + '', "warning");
+								return false;
+							}
+						} else {
+							$.messager.alert("警告", "修改失败！", "warning");
+							return false;
+						}
+					},
+					error : function(err) {
+						$.messager.alert("警告", "修改失败！", "warning");
+						return false;
+					}
+				})
+			
+			} else { //新增
+				var jsonData = {
+					"f_name" : f_name,
+					"f_info" : f_info,
+					"f_sys_item" : f_sys_item		
+				}
+				$.ajax({
+					type : "POST",
+					url : "../TRole/AddTRole",
+					data : jsonData,
+					success : function(data) {
+						if (data) {
+							var data = $.parseJSON(data);
+							if (data.code == 0) {
+								$.messager.alert('提示', '' + data.result.content + '');
+								RefreshData();
+							} else {
+								$.messager.alert("警告", '' + data.error + '', "warning");
+								return false;
+							}
+						} else {
+							$.messager.alert("警告", "新增失败！", "warning");
+							return false;
+						}
+					},
+					error : function(err) {
+						$.messager.alert("警告", "新增失败！", "warning");
+						return false;
+					}
+				})
+			}
+		}
+		function GetfunctionInfo(id) {
+			if (id) {
+				$.ajax({
+					type : "get",
+					url : "../TRole/GetTRoleById",
+					data : {
+						"Id" : id,
+						"time": new Date()
+					},
+					success : function(data) {
+						if (data) {
+							var obj = $.parseJSON(data).result.content;
+							$("#txtrolenameEdit").textbox("setValue",obj.f_name);
+							$("#txtRoleinfo").textbox("setValue",obj.f_info);
+							$("#txtItem").combobox("setValue", obj.f_sys_item);
+	
+						} else {
+							$.messager.alert("警告", "获取数据失败！", "warning");
+						}
+					},
+					error : function(err) {
+						$.messager.alert("警告", "获取数据失败！", "warning");
+					}
+				})
+			}
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>UserEdit.html</title>
+
+<meta name="keywords" content="keyword1,keyword2,keyword3">
+<meta name="description" content="this is my page">
+<meta name="content-type" content="text/html; charset=UTF-8">
+
+<!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+
+</head>
+
+<body>
+	<form id="form1">
+		<div>
+			<table cellpadding="10" style="margin-left: 50px">
+				<tr>
+					<td><strong style="color: #FF0000">*</strong>菜单名称:</td>
+					<td><input id="txtFunctionEdit" class="easyui-textbox"
+						style="width:230px;height:30px;line-height:35px;" /></td>
+				</tr>
+				<tr>
+					<td><strong style="color: #FF0000">*</strong>菜单代码:</td>
+					<td><input id="txtcode" class="easyui-textbox"
+						style="width:230px;height:30px;line-height:35px;" /></td>
+				</tr>
+				<tr>
+					<td><strong style="color: #FF0000">*</strong>菜单类型</td>
+					<td><select id="txtType" class="easyui-combobox"
+						panelheight="auto"
+						data-options="valueField:'id', textField:'text',editable:true"
+						name="language" editable="true"
+						style="width:230px;height:30px;line-height:35px;">
+							<option value='0'>节点</option>
+							<option value='1'>功能</option>
+					</select></td>
+				</tr>
+				<tr>
+					<td>菜单地址:</td>
+					<td><input id="txtUrl" class="easyui-textbox"
+						style="width:230px;height:30px;line-height:35px;" /></td>
+				</tr>
+
+				<tr>
+					<td><strong style="color: #FF0000">*</strong>上级菜单</td>
+					<td><select id="txtpartment" panelheight="auto"
+						class="easyui-combobox"
+						style="width:230px;height:30px;line-height:35px;">
+					</select></td>
+				</tr>
+				<tr>
+					<td>显示顺序:</td>
+					<td><input id="txtshownum" class="easyui-textbox"
+						style="width:230px;height:30px;line-height:35px;" /></td>
+				</tr>
+				<tr>
+					<td>图标代码:</td>
+					<td><input id="txtIcon" class="easyui-textbox"
+						style="width:230px;height:30px;line-height:35px;" /></td>
+				</tr>
+				<tr>
+					<td>备注:</td>
+					<td><input id="txtRoleinfo" class="easyui-textbox"
+						data-options="multiline:true"
+						style="width:230px;height:50px;line-height:35px;" /></td>
+				</tr>
+			</table>
+		</div>
+	</form>
+	<script>
+		$(function() {
+	
+			LoadFunction(2);
+		})
+		//保存数据
+		function SavefunctionInfo(id) {
+			var f_name = $("#txtFunctionEdit").textbox("getValue");
+			if (f_name == "") {
+				$.messager.alert("警告", "菜单名称不能为空！", "warning");
+				$("#txtFunctionEdit").next('span').find('input').focus();
+				return false;
+			}
+			var f_code = $("#txtcode").textbox("getValue");
+			if (f_code == "") {
+				$.messager.alert("警告", "菜单代码不能为空！", "warning");
+				$("#txtcode").next('span').find('input').focus();
+				return false;
+			} else {
+				if (isNaN(f_code)) {
+					$.messager.alert("警告", "菜单代码只能数字！", "warning");
+					$("#txtcode").next('span').find('input').focus();
+					return false;
+				}
+			}
+			var f_type = $("#txtType").combobox("getValue");
+			var f_url = $("#txtUrl").textbox("getValue");
+			if (f_url == "" && f_type == 1) {
+				$.messager.alert("警告", "菜单类型为功能时，菜单地址不能为空！", "warning");
+				$("#txtUrl").next('span').find('input').focus();
+				return false;
+			}
+	
+			var f_parent_code = 0;
+			if ($("#txtpartment").combotree('tree').tree("getSelected")) {
+				f_parent_code = $("#txtpartment").combotree('tree').tree("getSelected").code;
+			}
+			if (f_type == 1 && f_parent_code == 0) {
+				$.messager.alert("警告", "菜单类型为功能时，需选择上级菜单！", "warning");
+				$("#txtpartment").next('span').find('input').focus();
+				return false;
+			}
+			var f_shownum= $("#txtshownum").textbox("getValue");
+			if (f_shownum != "") {
+				if (isNaN(f_shownum)) {
+					$.messager.alert("警告", "显示顺序只能为数字！", "warning");
+					$("#txtshownum").next('span').find('input').focus();
+					return false;
+				}
+			} 
+			var f_icon = $("#txtIcon").textbox("getValue");
+			var f_remark = $("#txtRoleinfo").textbox("getValue");
+			if (id) {
+				var jsonData = {
+					"f_id" : id,
+					"f_name" : f_name,
+					"f_type" : f_type,
+					"f_url" : f_url,
+					"f_parent_code" : f_parent_code,
+					"f_icon" : f_icon,
+					"f_remark" : f_remark,
+					"f_shownum":f_shownum,
+					"f_code":f_code
+				}
+				$.ajax({
+					type : "POST",
+					url : "../TMenu/UpdateTMenu",
+					data : jsonData,
+					success : function(data) {
+						if (data) {
+							var data = $.parseJSON(data);
+							if (data.code == 0) {
+								$.messager.alert('提示', '' + data.result.content + '');
+								RefreshData(2);
+								LoadFunction(1);
+							} else {
+								$.messager.alert("警告", '' + data.error + '', "warning");
+								return false;
+							}
+						} else {
+							$.messager.alert("警告", "修改失败！", "warning");
+							return false;
+						}
+					},
+					error : function(err) {
+						$.messager.alert("警告", "修改失败！", "warning");
+						return false;
+					}
+				})
+	
+			} else { //新增
+				var jsonData = {
+					"f_name" : f_name,
+					"f_type" : f_type,
+					"f_url" : f_url,
+					"f_parent_code" : f_parent_code,
+					"f_icon" : f_icon,
+					"f_remark" : f_remark,
+					"f_shownum":f_shownum,
+					"f_code":f_code
+				}
+				$.ajax({
+					type : "POST",
+					url : "../TMenu/AddTMenu",
+					data : jsonData,
+					success : function(data) {
+						if (data) {
+							var data = $.parseJSON(data);
+							if (data.code == 0) {
+								$.messager.alert('提示', '' + data.result.content + '');
+								RefreshData(2);
+								LoadFunction(1);
+							} else {
+								$.messager.alert("警告", '' + data.error + '', "warning");
+								return false;
+							}
+						} else {
+							$.messager.alert("警告", "操作失败！", "warning");
+							return false;
+						}
+					},
+					error : function(err) {
+						$.messager.alert("警告", "操作失败！", "warning");
+						return false;
+					}
+				})
+			}
+		}
+	
+		function GetfunctionInfo(id) {
+			if (id) {
+				$.ajax({
+					type : "get",
+					url : "../TMenu/GetTMenuById",
+					data : {
+						"Id" : id,
+						"time" : new Date()
+					},
+					success : function(data) {
+						if (data) {
+							var obj = $.parseJSON(data).result.content;
+							$("#txtFunctionEdit").textbox("setValue", obj.f_name);
+							$("#txtcode").textbox("setValue", obj.f_code);
+							$("#txtType").combobox("setValue", obj.f_type);
+							$("#txtUrl").textbox("setValue", obj.f_url);
+							$("#txtpartment").combotree('setValue', obj.f_parent_code == 0 ? "" : obj.f_parent_code);
+							$("#txtIcon").textbox("setValue", obj.f_icon);
+							$("#txtshownum").textbox("setValue", obj.f_shownum);
+							$("#txtRoleinfo").textbox("setValue", obj.f_remark);
+	
+						} else {
+							$.messager.alert("警告", "获取数据失败！", "warning");
+						}
+					},
+					error : function(err) {
+						$.messager.alert("警告", "获取数据失败！", "warning");
+					}
+				})
+			}
+		}
+	</script>
+</body>
+</html>
